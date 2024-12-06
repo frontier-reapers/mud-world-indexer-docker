@@ -1,16 +1,16 @@
 services:
   indexer:
     build:
-      context: ./sqlite-indexer
+      context: ./indexer
     restart: always
     ports:
       - "3001:3001"
     networks:
-      - mud-network
+      - mud-sqlite-network
     env_file:
       - path: ./.env
         required: true
-      - path: ./sqlite-indexer/.env
+      - path: ./indexer/.env
         required: true
     volumes:
       - indexer-data:/data
@@ -19,16 +19,30 @@ services:
       context: ./world-explorer
     restart: always
     depends_on:
-      sqlite-indexer:
+      indexer:
         condition: service_started
     ports:
       - "13690:13690"
     networks:
-      - mud-network
+      - mud-sqlite-network
     env_file:
       - path: ./.env
         required: true
       - path: ./world-explorer/.env
+        required: true
+    volumes:
+      - indexer-data:/data:ro
+  admin:
+    image: ghcr.io/coleifer/sqlite-web:latest
+    depends_on:
+      indexer:
+        condition: service_started
+    ports:
+      - "8086:8080"
+    networks:
+      - mud-sqlite-network
+    env_file:
+      - path: ./admin/.env
         required: true
     volumes:
       - indexer-data:/data:ro
@@ -39,4 +53,4 @@ volumes:
 
 networks:
   mud-sqlite-network:
-    name: mud-network
+    name: mud-sqlite-network
