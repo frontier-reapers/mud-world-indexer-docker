@@ -2,7 +2,6 @@
 
 This is currently the only way to run the Mud World Explorer as this reads directly from the SQLite database maintained by the indexer.
 
-
 ### Configure Services
 
 > ![IMPORTANT]

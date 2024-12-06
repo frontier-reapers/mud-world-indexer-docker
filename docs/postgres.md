@@ -1,7 +1,5 @@
 ## PostgreSQL Indexer
 
-.
-
 ### Configure Services
 
 > ![IMPORTANT]
