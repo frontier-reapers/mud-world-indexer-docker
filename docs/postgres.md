@@ -2,7 +2,7 @@
 
 ### Configure Services
 
-> ![INFO]
+> ![TIP]
 > Change the `RPC_HTTP_URL` and `RPC_WS_URL` in the `.env` file in the `/src/sqlite` folder to a RPC server that is performant from you in a large world the indexer will create quite a lot of traffic.
 
 - in `/src/postgres/.env` change `RPC_HTTP_URL` and `RPC_WS_URL` to a ETH-JSON 2.0 RPC URL for the desired chain.
