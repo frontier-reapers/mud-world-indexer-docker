@@ -1,0 +1,42 @@
+services:
+  indexer:
+    build:
+      context: ./sqlite-indexer
+    restart: always
+    ports:
+      - "3001:3001"
+    networks:
+      - mud-network
+    env_file:
+      - path: ./.env
+        required: true
+      - path: ./sqlite-indexer/.env
+        required: true
+    volumes:
+      - indexer-data:/data
+  explorer:
+    build:
+      context: ./world-explorer
+    restart: always
+    depends_on:
+      sqlite-indexer:
+        condition: service_started
+    ports:
+      - "13690:13690"
+    networks:
+      - mud-network
+    env_file:
+      - path: ./.env
+        required: true
+      - path: ./world-explorer/.env
+        required: true
+    volumes:
+      - indexer-data:/data:ro
+
+volumes:
+  indexer-data:
+    driver: local
+
+networks:
+  mud-sqlite-network:
+    name: mud-network

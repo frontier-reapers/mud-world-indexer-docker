@@ -1,0 +1,60 @@
+services:
+  db:
+    build:
+      context: ./db
+      args:
+        - POSTGRES_USER
+        - POSTGRES_DB
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - mud-postgres-network
+    env_file:
+      - path: ./.env
+        required: true
+    volumes:
+      - db-data:/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+  indexer:
+    build:
+      context: ./indexer
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - mud-postgres-network
+    env_file:
+      - path: ./.env
+        required: true
+  admin:
+    build:
+      context: ./pgadmin
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - mud-postgres-network
+    ports:
+      - 8086:8086
+    env_file:
+      - path: ./.env
+        required: true
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  db-data:
+    driver: local
+  pgadmin-data:
+    driver: local
+
+networks:
+  mud-postgres-network:
+    name: mud-postgres-network
